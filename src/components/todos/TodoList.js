@@ -18,6 +18,11 @@ class TodoList extends React.Component {
     this.setState({ todos });
   };
 
+  createTodo = (todo) => {
+    const todos = [todo, ...this.state.todos];
+    this.setState({ todos });
+  };
+
   async fetchTodos() {
     try {
       const params = {
@@ -29,6 +34,7 @@ class TodoList extends React.Component {
       console.error(err);
     }
   }
+
   componentDidMount() {
     this.fetchTodos();
   }
@@ -36,7 +42,7 @@ class TodoList extends React.Component {
   render() {
     return (
       <div className="todo-list">
-        <TodoCreateField></TodoCreateField>
+        <TodoCreateField createTodo={this.createTodo}></TodoCreateField>
         {this.state.todos.map((todo) => (
           <Todo key={todo.id} data={todo} removeTodo={this.removeTodo}></Todo>
         ))}

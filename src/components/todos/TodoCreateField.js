@@ -13,11 +13,16 @@ class TodoCreateField extends React.Component {
     this.setState({ name: ev.target.value });
   };
 
-  createTodo = async () => {
+  createTodo = async (ev) => {
+    ev.preventDefault(); // Prevent page reload default action
+
     try {
-      await axios.post(`http://localhost:3000/todos`, {
+      const { data } = await axios.post(`http://localhost:3000/todos`, {
         name: this.state.name,
       });
+
+      // Upate the parent's todo state with the new item
+      if (data) this.props.createTodo(data);
     } catch (error) {
       throw error;
     }
@@ -26,13 +31,13 @@ class TodoCreateField extends React.Component {
   render() {
     return (
       <div>
-        <Form>
+        <Form onSubmit={this.createTodo}>
           <FormControl
             onChange={this.updateName}
             type="text"
             aria-label="Txt input with checkbox"
           />
-          <Button onClick={this.createTodo} variant="primary" type="submit">
+          <Button variant="primary" type="submit">
             Create Todo
           </Button>{" "}
         </Form>
