@@ -1,7 +1,7 @@
 import React from "react";
 import Todo from "./Todo";
 import axios from "axios";
-import TodoCreateField from "./TodoCreateField";
+import AddTodo from "./AddTodo";
 
 class TodoList extends React.Component {
   state = {
@@ -42,7 +42,9 @@ class TodoList extends React.Component {
   render() {
     return (
       <div className="todo-list">
-        <TodoCreateField createTodo={this.createTodo}></TodoCreateField>
+        <AddTodo createTodo={this.createTodo}></AddTodo>
+
+        {/* In order to populate the TodoList, we'll need immutabley map all the todos in the component's state to a new Todo components. We must declare a unique key for each Todo so that React knows which item has been changed, added, or removed.  */}
         {this.state.todos.map((todo) => (
           <Todo key={todo.id} data={todo} removeTodo={this.removeTodo}></Todo>
         ))}

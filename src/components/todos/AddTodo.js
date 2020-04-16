@@ -4,17 +4,23 @@ import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
 import axios from "axios";
 
-class TodoCreateField extends React.Component {
+class AddTodo extends React.Component {
   state = {
     name: null,
   };
 
+  /**
+   * Updates the name of the new todo field
+   */
   updateName = (ev) => {
     this.setState({ name: ev.target.value });
   };
 
+  /**
+   * Creates a new Todo and updates the state.
+   */
   createTodo = async (ev) => {
-    ev.preventDefault(); // Prevent page reload default action
+    ev.preventDefault(); // Prevent page reload default action.
 
     try {
       const { data } = await axios.post(`http://localhost:3000/todos`, {
@@ -35,7 +41,7 @@ class TodoCreateField extends React.Component {
           <FormControl
             onChange={this.updateName}
             type="text"
-            aria-label="Txt input with checkbox"
+            aria-label="add-todo"
           />
           <Button variant="primary" type="submit">
             Create Todo
@@ -46,4 +52,4 @@ class TodoCreateField extends React.Component {
   }
 }
 
-export default TodoCreateField;
+export default AddTodo;

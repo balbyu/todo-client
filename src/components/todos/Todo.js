@@ -11,7 +11,6 @@ class Todo extends React.Component {
 
   toggleComplete = async (ev) => {
     try {
-      console.dir(ev.target);
       const completed = ev.target.checked;
       const todo = await axios.put(
         `http://localhost:3000/todos/${this.state.id}`,
