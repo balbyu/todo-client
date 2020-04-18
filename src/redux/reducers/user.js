@@ -1,7 +1,9 @@
 import { LOGIN_USER } from "../actionTypes";
 
 const initialState = {
-  currentUser: {},
+  user: null,
+  token: null,
+  loggedIn: false,
 };
 
 export function CreateUserReducer(state = initialState, action) {

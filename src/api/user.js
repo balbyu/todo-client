@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const BASE_URL = "http://localhost:3000";
 
 export const login = ({ username, password }) => {
@@ -7,3 +9,5 @@ export const login = ({ username, password }) => {
 
   return axios.post(`${BASE_URL}/users/login`, { username, password });
 };
+
+export default { login };

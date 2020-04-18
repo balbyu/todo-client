@@ -28,12 +28,12 @@ export const createUser = (user) => {
 };
 
 export const loginRequest = (username, password) => {
-  return axios;
+  return;
 };
 
 export const loginUser = (user, token) => {
   return {
     type: LOGIN_USER,
-    payload: { user, token },
+    payload: { user, token, loggedIn: true },
   };
 };
