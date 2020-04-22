@@ -1,16 +1,13 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { loginUser } from "../redux/actions/user";
-import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { getLoggedIn } from "../redux/selectors/user";
-import api from "../api";
-
+import { userActions } from "../redux/actions/user";
 class Login extends React.Component {
   state = {
     username: null,
     password: null,
+    submitted: false,
   };
 
   updateUsername = ({ target }) => {
@@ -23,23 +20,22 @@ class Login extends React.Component {
     this.setState({ password: target.value });
   };
 
-  login = async (ev) => {
+  handleSubmit = (ev) => {
     ev.preventDefault();
-    try {
-      console.log("We are here");
-      const { data } = await api.user.login(this.state);
-      console.log(this.props);
-      this.props.loginUser(data);
-      console.log(this.props.loggedIn);
-    } catch (err) {
-      // Send a notification to the screen that "Username or password is invalid";
+
+    this.setState({ submitted: true });
+    const { username, password } = this.state;
+    if (username && password) {
+      this.props.login(username, password);
     }
   };
 
   render() {
+    const { loggingIn } = this.props;
+    const { username, password, submitted } = this.state;
     return (
       <div>
-        {this.state.loggedIn ? <Redirect to="/todos" /> : null}
+        <h1>Please log in</h1>
         <Form>
           <Form.Group controlId="formBasicUsername">
             <Form.Label>Username</Form.Label>
@@ -49,6 +45,9 @@ class Login extends React.Component {
               onChange={this.updateUsername}
             />
             <Form.Text className="text-muted"></Form.Text>
+            {submitted && !username && (
+              <div className="help-block">Username is required</div>
+            )}
           </Form.Group>
 
           <Form.Group controlId="formBasicPassword">
@@ -58,9 +57,15 @@ class Login extends React.Component {
               placeholder="Password"
               onChange={this.updatePassword}
             />
+            {submitted && !password && (
+              <div className="help-block">Password is required</div>
+            )}
           </Form.Group>
-          <Button variant="primary" type="submit" onClick={this.login}>
-            Login{" "}
+          <Button variant="primary" type="submit" onClick={this.handleSubmit}>
+            Login
+            {loggingIn && (
+              <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            )}
           </Button>
         </Form>
       </div>
@@ -68,14 +73,14 @@ class Login extends React.Component {
   }
 }
 
-// component will receive: props.a, props.todos, and props.filter
+function mapStateToProps(state) {
+  const { loggingIn } = state.authentication;
+  return { loggingIn };
+}
 
-// Assings Redux actions to Login's prop
-const mapDispatchToProps = (dispatch) => ({
-  loginUser: (payload) => dispatch(loginUser(payload)),
-});
+const actionCreators = {
+  login: userActions.login,
+  logout: userActions.logout,
+};
 
-export default connect(
-  (state) => ({ loggedIn: getLoggedIn(state) }),
-  mapDispatchToProps
-)(Login);
+export default connect(mapStateToProps, actionCreators)(Login);

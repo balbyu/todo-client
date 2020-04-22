@@ -3,31 +3,30 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
-import axios from "axios";
 import { debounce } from "../../utils";
+import { todoService } from "../../api/todo";
 
 class Todo extends React.Component {
   state = { ...this.props.data };
 
-  toggleComplete = async (ev) => {
+  deleteTodo = async () => {
     try {
-      const completed = ev.target.checked;
-      const todo = await axios.put(
-        `http://localhost:3000/todos/${this.state.id}`,
-        {
-          completed,
-        }
-      );
-      this.setState({ completed });
-    } catch (error) {
-      throw error;
+      await todoService.deleteTodo(this.state.id);
+      this.props.removeTodo(this.state.id);
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  deleteTodo = async () => {
+  completeTodo = async (ev) => {
     try {
-      await axios.delete(`http://localhost:3000/todos/${this.state.id}`);
-      this.props.removeTodo(this.state.id);
+      const completed = ev.target.checked;
+      const payload = {
+        id: this.state.id,
+        completed,
+      };
+      await todoService.completeTodo(payload);
+      this.setState({ completed });
     } catch (error) {
       throw error;
     }
@@ -37,12 +36,11 @@ class Todo extends React.Component {
     try {
       const name = target.value;
       if (name && name.length >= 3) {
-        const todo = await axios.put(
-          `http://localhost:3000/todos/${this.state.id}`,
-          {
-            name,
-          }
-        );
+        const payload = {
+          id: this.state.id,
+          name,
+        };
+        await todoService.updateTodo(payload);
         this.setState({ name });
       }
     } catch (error) {
@@ -58,7 +56,7 @@ class Todo extends React.Component {
             <InputGroup.Prepend>
               <InputGroup.Checkbox
                 aria-label="Checkbox for completed todo status"
-                onChange={this.toggleComplete}
+                onChange={this.completeTodo}
                 checked={this.state.completed}
               />
             </InputGroup.Prepend>

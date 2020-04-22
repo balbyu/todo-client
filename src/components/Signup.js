@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { connect } from "react-redux";
 import { createUser } from "../redux/actions/user";
-import axios from "axios";
+import api from "../api";
 
 class Signup extends React.Component {
   state = {
@@ -38,28 +38,22 @@ class Signup extends React.Component {
     this.setState({ password: target.value });
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-    this.props.createUser(this.state);
-  };
-
-  signup = () => {
-    if (
-      !this.state.firstName ||
-      !this.state.lastName ||
-      !this.state.email ||
-      !this.state.username ||
-      !this.state.password
-    )
-      throw new Error("Signup form is missing an entry.");
-
+  signup = async (ev) => {
+    ev.preventDefault();
     try {
-    } catch (error) {}
+      await api.user.signup(this.state);
+      // const payload = { user: data.user, token: data.token };
+      // this.props.loginUser(payload);
+      // localStorage.setItem("token", this.props.token);
+    } catch (err) {
+      // Send a notification to the screen that "Username or password is invalid";
+    }
   };
 
   render() {
     return (
       <div>
+        <h1>Sign Up</h1>
         <Form>
           <Form.Group>
             <Form.Label>First Name</Form.Label>
@@ -105,17 +99,12 @@ class Signup extends React.Component {
               onChange={this.updatePassword}
             />
           </Form.Group>
-          <Button variant="primary" type="submit" onClick={this.handleSubmit}>
-            Login
+          <Button variant="primary" type="submit" onClick={this.signup}>
+            Create
           </Button>
         </Form>
       </div>
     );
   }
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  createUser: (userInfo) => dispatch(createUser(userInfo)),
-});
-
-export default connect(null, mapDispatchToProps)(Signup);
+export default Signup;

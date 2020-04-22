@@ -1,39 +1,48 @@
-import { CREATE_USER, LOGIN_USER } from "../actionTypes";
+import { actionTypes } from "../actionTypes";
+import { userService } from "../../api/user";
+import { history } from "../../helpers/history";
 
-export const createUser = (user) => {
-  console.log(user);
+export const userActions = {
+  login,
+  logout,
+  register,
+};
 
+function login(username, password) {
   return (dispatch) => {
-    return fetch("http://localhost:3000/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: user,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.message) {
-          // Here you should have logic to handle invalid creation of a user.
-          // This assumes your Rails API will return a JSON object with a key of
-          // 'message' if there is an error with creating the user, i.e. invalid username
-        } else {
-          localStorage.setItem("token", data.token);
-          dispatch(loginUser(data.user));
-        }
-      });
+    userService.login({ username, password }).then((user) => {
+      dispatch(success(user));
+      history.push("/todos");
+    });
   };
-};
 
-export const loginRequest = (username, password) => {
-  return;
-};
+  function request(user) {
+    return { type: actionTypes.LOGIN_REQUEST, user };
+  }
+  function success(user) {
+    return { type: actionTypes.LOGIN_SUCCESS, user };
+  }
+}
 
-export const loginUser = (user, token) => {
-  return {
-    type: LOGIN_USER,
-    payload: { user, token, loggedIn: true },
+function logout() {
+  userService.logout();
+  return { type: actionTypes.LOGOUT };
+}
+
+function register(user) {
+  return (dispatch) => {
+    dispatch(request(user));
+
+    userService.register(user).then((user) => {
+      dispatch(success());
+      history.push("/login");
+    });
   };
-};
+
+  function request(user) {
+    return { type: actionTypes.REGISTER_REQUEST, user };
+  }
+  function success(user) {
+    return { type: actionTypes.REGISTER_SUCCESS, user };
+  }
+}

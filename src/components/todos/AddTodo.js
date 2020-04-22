@@ -2,11 +2,11 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
-import axios from "axios";
+import { todoService } from "../../api/todo";
 
 class AddTodo extends React.Component {
   state = {
-    name: null,
+    name: "",
   };
 
   /**
@@ -22,16 +22,14 @@ class AddTodo extends React.Component {
   createTodo = async (ev) => {
     ev.preventDefault(); // Prevent page reload default action.
 
+    if (!this.state.name) throw Error("Name must not be empty.");
     try {
-      const { data } = await axios.post(`http://localhost:3000/todos`, {
-        name: this.state.name,
-      });
-
-      // Upate the parent's todo state with the new item
+      const data = await todoService.createTodo(this.state.name);
       if (data) this.props.createTodo(data);
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      console.log(err);
     }
+    this.setState({ name: "" });
   };
 
   render() {
@@ -40,6 +38,7 @@ class AddTodo extends React.Component {
         <Form onSubmit={this.createTodo}>
           <FormControl
             onChange={this.updateName}
+            value={this.state.name}
             type="text"
             aria-label="add-todo"
           />

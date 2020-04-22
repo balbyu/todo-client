@@ -1,7 +1,8 @@
 import React from "react";
 import Todo from "./Todo";
-import axios from "axios";
 import AddTodo from "./AddTodo";
+import { todoActions } from "../../redux/actions";
+import { connect } from "react-redux";
 
 class TodoList extends React.Component {
   state = {
@@ -19,20 +20,14 @@ class TodoList extends React.Component {
   };
 
   createTodo = (todo) => {
-    const todos = [todo, ...this.state.todos];
+    const todos = [...this.state.todos, todo.data];
     this.setState({ todos });
   };
 
   async fetchTodos() {
     try {
-      const params = {
-        column: "createdAt",
-      };
-      const todos = await axios.get("http://localhost:3000/todos", { params });
-      this.setState({ todos: todos.data });
-    } catch (err) {
-      console.error(err);
-    }
+      this.props.getTodos();
+    } catch (error) {}
   }
 
   componentDidMount() {
@@ -40,16 +35,29 @@ class TodoList extends React.Component {
   }
 
   render() {
+    const { todos } = this.props;
     return (
       <div className="todo-list">
         <AddTodo createTodo={this.createTodo}></AddTodo>
 
         {/* In order to populate the TodoList, we'll need immutabley map all the todos in the component's state to a new Todo components. We must declare a unique key for each Todo so that React knows which item has been changed, added, or removed.  */}
-        {this.state.todos.map((todo) => (
-          <Todo key={todo.id} data={todo} removeTodo={this.removeTodo}></Todo>
-        ))}
+        {todos.todos &&
+          todos.todos.map((todo) => (
+            <Todo key={todo.id} data={todo} removeTodo={this.removeTodo}></Todo>
+          ))}
       </div>
     );
   }
 }
-export default TodoList;
+
+function mapStateToProps(state) {
+  console.log("State", state);
+  const { todos } = state;
+  return { todos };
+}
+
+const actionCreators = {
+  getTodos: todoActions.getAll,
+};
+
+export default connect(mapStateToProps, actionCreators)(TodoList);

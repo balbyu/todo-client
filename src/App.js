@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { history } from "./helpers/history";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
@@ -9,7 +10,7 @@ import "./App.css";
 
 function App() {
   return (
-    <Router>
+    <Router history={history}>
       <div className="App">
         <nav>
           <ul>

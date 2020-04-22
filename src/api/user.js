@@ -2,12 +2,46 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:3000";
 
-export const login = ({ username, password }) => {
-  if (!username || !password) {
-    throw new Error("A username and password must be provided.");
-  }
-
-  return axios.post(`${BASE_URL}/users/login`, { username, password });
+export const userService = {
+  login,
+  logout,
+  signup,
 };
 
-export default { login };
+/**
+ * Logs the user in
+ * @param {*} username
+ * @param {*} password
+ */
+async function login(payload) {
+  try {
+    const user = await axios.post(`${BASE_URL}/users/login`, payload);
+    localStorage.setItem("user", JSON.stringify(user.data));
+    return user;
+  } catch (error) {
+    logout();
+    window.location.reload(true);
+  }
+}
+
+/**
+ *  Remove user from local storage to log user out.
+ */
+function logout() {
+  localStorage.removeItem("user");
+}
+
+/**
+ * Signs up a new user.
+ * @param {*} user
+ */
+async function signup(user) {
+  try {
+    return await axios.post(`${BASE_URL}/users`, { ...user });
+  } catch (error) {
+    logout();
+    window.location.reload(true);
+  }
+}
+
+export default { login, signup, logout };

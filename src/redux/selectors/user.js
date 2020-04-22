@@ -1,3 +1,3 @@
-export const getUser = (state) => state.user;
-export const getToken = (state) => state.token;
-export const getLoggedIn = (state) => state.loggedIn;
+export const getUser = (state) => state.login.user;
+export const getToken = (state) => state.login.token;
+export const getLoggedIn = (state) => state.login.loggedIn;
