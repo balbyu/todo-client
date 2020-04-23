@@ -2,40 +2,30 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
-import { todoService } from "../../api/todo";
+import { todoActions } from "../../redux/actions";
+import { connect } from "react-redux";
 
 class AddTodo extends React.Component {
   state = {
     name: "",
   };
 
-  /**
-   * Updates the name of the new todo field
-   */
   updateName = (ev) => {
     this.setState({ name: ev.target.value });
   };
 
-  /**
-   * Creates a new Todo and updates the state.
-   */
-  createTodo = async (ev) => {
-    ev.preventDefault(); // Prevent page reload default action.
-
-    if (!this.state.name) throw Error("Name must not be empty.");
-    try {
-      const data = await todoService.createTodo(this.state.name);
-      if (data) this.props.createTodo(data);
-    } catch (err) {
-      console.log(err);
+  handleSubmit = (ev) => {
+    ev.preventDefault();
+    if (this.state.name) {
+      this.props.createTodo(this.state.name);
+      this.setState({ name: "" });
     }
-    this.setState({ name: "" });
   };
 
   render() {
     return (
       <div>
-        <Form onSubmit={this.createTodo}>
+        <Form onSubmit={this.handleSubmit}>
           <FormControl
             onChange={this.updateName}
             value={this.state.name}
@@ -51,4 +41,13 @@ class AddTodo extends React.Component {
   }
 }
 
-export default AddTodo;
+function mapStateToProps(state) {
+  const { todos } = state;
+  return { todos };
+}
+
+const actionCreators = {
+  createTodo: todoActions.createTodo,
+};
+
+export default connect(mapStateToProps, actionCreators)(AddTodo);

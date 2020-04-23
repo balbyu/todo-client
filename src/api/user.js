@@ -5,7 +5,7 @@ const BASE_URL = "http://localhost:3000";
 export const userService = {
   login,
   logout,
-  signup,
+  register,
 };
 
 /**
@@ -35,7 +35,7 @@ function logout() {
  * Signs up a new user.
  * @param {*} user
  */
-async function signup(user) {
+async function register(user) {
   try {
     return await axios.post(`${BASE_URL}/users`, { ...user });
   } catch (error) {
@@ -44,4 +44,4 @@ async function signup(user) {
   }
 }
 
-export default { login, signup, logout };
+export default { login, register, logout };

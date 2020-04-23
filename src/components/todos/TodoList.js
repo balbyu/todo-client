@@ -19,30 +19,20 @@ class TodoList extends React.Component {
     this.setState({ todos });
   };
 
-  createTodo = (todo) => {
-    const todos = [...this.state.todos, todo.data];
-    this.setState({ todos });
-  };
-
-  async fetchTodos() {
-    try {
-      this.props.getTodos();
-    } catch (error) {}
-  }
-
   componentDidMount() {
-    this.fetchTodos();
+    this.props.getTodos();
   }
 
   render() {
-    const { todos } = this.props;
+    const todos = this.props.todos.todos;
+
     return (
       <div className="todo-list">
-        <AddTodo createTodo={this.createTodo}></AddTodo>
+        <AddTodo></AddTodo>
 
         {/* In order to populate the TodoList, we'll need immutabley map all the todos in the component's state to a new Todo components. We must declare a unique key for each Todo so that React knows which item has been changed, added, or removed.  */}
-        {todos.todos &&
-          todos.todos.map((todo) => (
+        {todos &&
+          todos.map((todo) => (
             <Todo key={todo.id} data={todo} removeTodo={this.removeTodo}></Todo>
           ))}
       </div>
@@ -51,13 +41,13 @@ class TodoList extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log("State", state);
   const { todos } = state;
   return { todos };
 }
 
 const actionCreators = {
   getTodos: todoActions.getAll,
+  deleteTodo: todoActions.deleteTodo,
 };
 
 export default connect(mapStateToProps, actionCreators)(TodoList);

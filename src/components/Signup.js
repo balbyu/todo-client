@@ -2,51 +2,58 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { connect } from "react-redux";
-import { createUser } from "../redux/actions/user";
-import api from "../api";
+import { userActions } from "../redux/actions/user";
 
 class Signup extends React.Component {
   state = {
-    firstName: null,
-    lastName: null,
-    email: null,
-    username: null,
-    password: null,
+    user: {
+      firstName: null,
+      lastName: null,
+      email: null,
+      username: null,
+      password: null,
+    },
+    submitted: false,
   };
 
   updateFirstName = ({ target }) => {
     if (!target && !target.value) return;
-    this.setState({ firstName: target.value });
+    const { user } = this.state;
+    this.setState({ user: { ...user, firstName: target.value } });
   };
-
   updateLastName = ({ target }) => {
     if (!target && !target.value) return;
-    this.setState({ lastName: target.value });
+    const { user } = this.state;
+    this.setState({ user: { ...user, lastName: target.value } });
   };
   updateEmail = ({ target }) => {
     if (!target && !target.value) return;
-    this.setState({ email: target.value });
+    const { user } = this.state;
+    this.setState({ user: { ...user, email: target.value } });
   };
-
   updateUsername = ({ target }) => {
     if (!target && !target.value) return;
-    this.setState({ username: target.value });
+    const { user } = this.state;
+    this.setState({ user: { ...user, username: target.value } });
   };
-
   updatePassword = ({ target }) => {
     if (!target && !target.value) return;
-    this.setState({ password: target.value });
+    const { user } = this.state;
+    this.setState({ user: { ...user, password: target.value } });
   };
 
-  signup = async (ev) => {
+  handleSubmit = async (ev) => {
     ev.preventDefault();
-    try {
-      await api.user.signup(this.state);
-      // const payload = { user: data.user, token: data.token };
-      // this.props.loginUser(payload);
-      // localStorage.setItem("token", this.props.token);
-    } catch (err) {
-      // Send a notification to the screen that "Username or password is invalid";
+    this.setState({ submitted: true });
+    const { user } = this.state;
+    if (
+      user.firstName &&
+      user.lastName &&
+      user.email &&
+      user.username &&
+      user.password
+    ) {
+      await this.props.register(user);
     }
   };
 
@@ -99,12 +106,23 @@ class Signup extends React.Component {
               onChange={this.updatePassword}
             />
           </Form.Group>
-          <Button variant="primary" type="submit" onClick={this.signup}>
-            Create
+          <Button variant="primary" type="submit" onClick={this.handleSubmit}>
+            Submit
           </Button>
         </Form>
       </div>
     );
   }
 }
-export default Signup;
+
+const mapStateToProps = (state) => {
+  const { registering } = state.registration;
+  return { registering };
+};
+
+const actionCreators = {
+  register: userActions.register,
+  login: userActions.login,
+};
+
+export default connect(mapStateToProps, actionCreators)(Signup);
