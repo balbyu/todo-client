@@ -4,49 +4,34 @@ import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import { debounce } from "../../utils";
-import { todoService } from "../../api/todo";
 
 class Todo extends React.Component {
   state = { ...this.props.data };
 
-  deleteTodo = async () => {
-    try {
-      await todoService.deleteTodo(this.state.id);
-      this.props.removeTodo(this.state.id);
-    } catch (err) {
-      console.log(err);
-    }
+  handleComplete = (ev) => {
+    const completed = ev.target.checked;
+    const payload = {
+      id: this.state.id,
+      completed,
+    };
+    this.props.completeTodo(payload);
   };
 
-  completeTodo = async (ev) => {
-    try {
-      const completed = ev.target.checked;
+  handleUpdate = debounce((target) => {
+    const name = target.value;
+    if (name && name.length >= 3) {
       const payload = {
         id: this.state.id,
-        completed,
+        name,
       };
-      await todoService.completeTodo(payload);
-      this.setState({ completed });
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  updateTodo = debounce(async (target) => {
-    try {
-      const name = target.value;
-      if (name && name.length >= 3) {
-        const payload = {
-          id: this.state.id,
-          name,
-        };
-        await todoService.updateTodo(payload);
-        this.setState({ name });
-      }
-    } catch (error) {
-      throw error;
+      this.props.updateTodo(payload);
     }
   });
+
+  handleDelete = (ev) => {
+    ev.preventDefault();
+    this.props.deleteTodo(this.state.id);
+  };
 
   render() {
     return (
@@ -56,22 +41,21 @@ class Todo extends React.Component {
             <InputGroup.Prepend>
               <InputGroup.Checkbox
                 aria-label="Checkbox for completed todo status"
-                onChange={this.completeTodo}
-                checked={this.state.completed}
+                onChange={this.handleComplete}
+                checked={this.props.data.completed}
               />
             </InputGroup.Prepend>
             <FormControl
               type="text"
               aria-label="Text input with checkbox"
-              placeholder={this.state.name}
+              placeholder={this.props.data.name}
               onChange={(e) => {
-                let target = e.target;
-                this.updateTodo(target);
+                this.handleUpdate(e.target);
               }}
             />
-            {this.state.name}
+            {this.props.data.name}
           </InputGroup>
-          <Button variant="primary" onClick={this.deleteTodo}>
+          <Button variant="primary" onClick={this.handleDelete}>
             Delete Button
           </Button>{" "}
         </Form>

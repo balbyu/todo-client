@@ -2,8 +2,6 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
-import { todoActions } from "../../redux/actions";
-import { connect } from "react-redux";
 
 class AddTodo extends React.Component {
   state = {
@@ -41,13 +39,4 @@ class AddTodo extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  const { todos } = state;
-  return { todos };
-}
-
-const actionCreators = {
-  createTodo: todoActions.createTodo,
-};
-
-export default connect(mapStateToProps, actionCreators)(AddTodo);
+export default AddTodo;

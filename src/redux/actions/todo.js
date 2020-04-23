@@ -70,7 +70,7 @@ const updateTodo = (payload) => {
   return async (dispatch) => {
     dispatch(request());
     try {
-      const todo = await todoService.updateTodos(payload);
+      const todo = await todoService.updateTodo(payload);
       dispatch(success(todo.data));
     } catch (error) {
       dispatch(failure(error.toString()));
@@ -83,29 +83,29 @@ const updateTodo = (payload) => {
     return { type: actionTypes.UPDATE_SUCCESS, todo };
   }
   function failure(error) {
-    return { type: actionTypes.COMPLETE_FAILURE, error };
+    return { type: actionTypes.UPDATE_FAILURE, error };
   }
 };
 
 const deleteTodo = (id) => {
   return async (dispatch) => {
-    dispatch(request());
+    dispatch(request(id));
     try {
       await todoService.deleteTodo(id);
-      dispatch(success());
+      dispatch(success(id));
     } catch (error) {
-      dispatch(failure(error.toString()));
+      dispatch(failure(id, error.toString()));
     }
   };
 
-  function request() {
-    return { type: actionTypes.DELETE_REQUEST };
+  function request(id) {
+    return { type: actionTypes.DELETE_REQUEST, id };
   }
-  function success(todos) {
-    return { type: actionTypes.DELETE_SUCCESS };
+  function success(id) {
+    return { type: actionTypes.DELETE_SUCCESS, id };
   }
-  function failure(error) {
-    return { type: actionTypes.DELETE_FAILURE, error };
+  function failure(id, error) {
+    return { type: actionTypes.DELETE_FAILURE, id, error };
   }
 };
 
