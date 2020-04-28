@@ -6,8 +6,8 @@ const login = (username, password) => {
   return (dispatch) => {
     dispatch(request({ username })); // Login request sent
     userService.login({ username, password }).then(
-      (user) => {
-        dispatch(success(user.data.user)); // Successfully logged in
+      (response) => {
+        dispatch(success(response.data.user)); // Successfully logged in
         history.push("/todos");
       },
       (error) => {
@@ -32,18 +32,20 @@ const logout = () => {
   return { type: actionTypes.LOGOUT };
 };
 
-const register = (bigUser) => {
-  return (dispatch) => {
-    dispatch(request(bigUser.data)); //Register request sent
+const validate = (payload) => {
+  return { type: actionTypes.VALIDATE, payload };
+};
 
-    userService.register(bigUser).then(
-      (user) => {
-        dispatch(success(bigUser));
-      },
-      (error) => {
-        dispatch(failure(error));
-      }
-    );
+const register = (user) => {
+  return async (dispatch) => {
+    dispatch(request(user)); //Register request sent
+
+    try {
+      const response = await userService.register(user);
+      dispatch(success(response.data));
+    } catch (error) {
+      dispatch(failure(error));
+    }
   };
 
   function request(user) {
@@ -61,4 +63,5 @@ export const userActions = {
   login,
   logout,
   register,
+  validate,
 };

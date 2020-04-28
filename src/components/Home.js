@@ -29,7 +29,9 @@ class Home extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const { loggedIn } = state.authentication;
+  const loggedIn = state.authentication.loggedIn
+    ? state.authentication.loggedIn
+    : null;
   const { username } = loggedIn ? state.authentication.user : "";
   return { username, loggedIn };
 };

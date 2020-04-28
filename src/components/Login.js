@@ -12,6 +12,7 @@ class Login extends React.Component {
   };
 
   componentDidMount() {
+    // Called only once
     if (this.props.loggedIn) {
       this.props.logout();
       this.props.reset();
@@ -84,6 +85,7 @@ class Login extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  if (!state || !state.authentication) return;
   const { loggingIn, loggedIn } = state.authentication;
   return { loggingIn, loggedIn };
 };

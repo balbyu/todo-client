@@ -14,7 +14,11 @@ const appReducer = combineReducers({
 const rootReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.RESET_APP:
-      state = undefined;
+      state = {
+        authentication: state.authentication,
+        registration: null,
+        todos: null,
+      };
       return appReducer(state, action);
 
     default:

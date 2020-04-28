@@ -9,7 +9,7 @@ class TodoMain extends React.Component {
     return (
       <main>
         <Container>
-          {this.props.loggedIn ? <TodoList></TodoList> : history.push("/login")}
+          <TodoList></TodoList>
         </Container>
       </main>
     );

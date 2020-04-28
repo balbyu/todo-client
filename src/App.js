@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Route, Switch } from "react-router-dom";
+import { Router, Route, Switch, Link } from "react-router-dom";
 import { history } from "./helpers/history";
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -8,6 +8,8 @@ import TodoMain from "./components/todos/TodoMain";
 import Container from "react-bootstrap/Container";
 import { Navbar, Nav } from "react-bootstrap/";
 import { connect } from "react-redux";
+import { userService } from "./api/user";
+import { userActions } from "./redux/actions/user";
 
 import "./App.css";
 
@@ -16,26 +18,31 @@ class App extends React.Component {
     loggedIn: false,
   };
 
+  async componentDidMount() {
+    if (!this.props.loggedIn) {
+      const payload = await userService.validate();
+      this.props.validate(payload);
+    }
+  }
+
   render() {
     return (
       <Container>
         <Router history={history}>
           <Navbar bg="dark" variant="dark" expand="lg">
-            <Navbar.Brand href="/">Ttyelud & Balbyu's Todo App</Navbar.Brand>
+            <Navbar.Brand>Ttyelud & Balbyu's Todo App</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="mr-auto">
+                <Link to="/">Home</Link>
+                {this.props.loggedIn ? <Link to="/todos">Todos</Link> : ""}
                 {this.props.loggedIn ? (
-                  <Nav.Link href="/todos">Todos</Nav.Link>
+                  <Link to="/login">Logout</Link>
                 ) : (
-                  ""
+                  <Link to="/login">Login</Link>
                 )}
-                {this.props.loggedIn ? (
-                  <Nav.Link href="/login">Logout</Nav.Link>
-                ) : (
-                  <Nav.Link href="/login">Login</Nav.Link>
-                )}
-                <Nav.Link href="/signup">Signup</Nav.Link>
+
+                <Link to="/signup">Signup</Link>
               </Nav>
             </Navbar.Collapse>
           </Navbar>
@@ -66,4 +73,8 @@ const mapStateToProps = (state) => {
   return { loggedIn };
 };
 
-export default connect(mapStateToProps, null)(App);
+const actionCreators = {
+  validate: userActions.validate,
+};
+
+export default connect(mapStateToProps, actionCreators)(App);

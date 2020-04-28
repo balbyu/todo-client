@@ -1,4 +1,5 @@
 import axios from "axios";
+import { authHeader } from "../helpers/authHeader";
 
 const BASE_URL = "http://localhost:3000";
 
@@ -6,7 +7,23 @@ export const userService = {
   login,
   logout,
   register,
+  validate,
 };
+
+async function validate() {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/users/validate`,
+      authHeader()
+    );
+    return {
+      valid: Boolean(data && data.id),
+      user: data,
+    };
+  } catch (error) {
+    return false;
+  }
+}
 
 /**
  * Logs the user in

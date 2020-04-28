@@ -42,7 +42,7 @@ class Signup extends React.Component {
     this.setState({ user: { ...user, password: target.value } });
   };
 
-  handleSubmit = (ev) => {
+  handleSubmit = async (ev) => {
     ev.preventDefault();
     this.setState({ submitted: true });
     const { user } = this.state;
@@ -53,15 +53,16 @@ class Signup extends React.Component {
       user.username &&
       user.password
     ) {
-      this.props.register(user);
+      await this.props.register(user);
+      debugger;
+      if (this.props.user) {
+        const { username, password } = this.state.user;
+        this.props.login(username, password);
+      }
     }
   };
 
   render() {
-    if (this.props.registered && !this.props.loggedIn) {
-      const { username, password } = this.props.user;
-      this.props.login(username, password);
-    }
     return (
       <div>
         <h1>Sign Up</h1>

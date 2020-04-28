@@ -17,6 +17,8 @@ export const actionTypes = {
 
   LOGOUT: "USERS_LOGOUT",
 
+  VALIDATE: "USERS_VALIDATE",
+
   /**
    * Todo Action Types
    */

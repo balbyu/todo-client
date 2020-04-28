@@ -1,7 +1,9 @@
 import { actionTypes } from "../actionTypes";
 
-let user = JSON.parse(localStorage.getItem("user"));
-const initialState = user ? { loggedIn: true, user } : { loggedIn: false };
+const initialState = {
+  loggedIn: false,
+  user: {},
+};
 
 export function authentication(state = initialState, action) {
   switch (action.type) {
@@ -19,6 +21,14 @@ export function authentication(state = initialState, action) {
       return {};
     case actionTypes.LOGOUT:
       return { loggedIn: false };
+
+    case actionTypes.VALIDATE:
+      const { valid, user } = action.payload;
+
+      return {
+        loggedIn: valid,
+        user,
+      };
     default:
       return state;
   }
