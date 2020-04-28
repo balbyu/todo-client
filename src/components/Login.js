@@ -3,12 +3,20 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { connect } from "react-redux";
 import { userActions } from "../redux/actions/user";
+import { actions } from "../redux/actions";
 class Login extends React.Component {
   state = {
     username: null,
     password: null,
     submitted: false,
   };
+
+  componentDidMount() {
+    if (this.props.loggedIn) {
+      this.props.logout();
+      this.props.reset();
+    }
+  }
 
   updateUsername = ({ target }) => {
     if (!target && !target.value) return;
@@ -76,13 +84,14 @@ class Login extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const { loggingIn } = state.authentication;
-  return { loggingIn };
+  const { loggingIn, loggedIn } = state.authentication;
+  return { loggingIn, loggedIn };
 };
 
 const actionCreators = {
   login: userActions.login,
   logout: userActions.logout,
+  reset: actions.reset,
 };
 
 export default connect(mapStateToProps, actionCreators)(Login);

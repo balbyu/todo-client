@@ -5,12 +5,12 @@ import { todoActions } from "../../redux/actions";
 import { connect } from "react-redux";
 
 class TodoList extends React.Component {
-  state = {
-    todos: [],
-  };
+  state = {};
 
   componentDidMount() {
-    this.props.getTodos();
+    if (!this.props.loaded) {
+      this.props.getTodos();
+    }
   }
 
   render() {
@@ -38,7 +38,8 @@ class TodoList extends React.Component {
 
 function mapStateToProps(state) {
   const { todos } = state;
-  return { todos };
+  const { loaded } = state.todos;
+  return { todos, loaded };
 }
 
 const actionCreators = {

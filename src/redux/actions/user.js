@@ -7,7 +7,7 @@ const login = (username, password) => {
     dispatch(request({ username })); // Login request sent
     userService.login({ username, password }).then(
       (user) => {
-        dispatch(success(user)); // Successfully logged in
+        dispatch(success(user.data.user)); // Successfully logged in
         history.push("/todos");
       },
       (error) => {
@@ -32,14 +32,13 @@ const logout = () => {
   return { type: actionTypes.LOGOUT };
 };
 
-const register = (user) => {
+const register = (bigUser) => {
   return (dispatch) => {
-    dispatch(request(user)); //Register request sent
+    dispatch(request(bigUser.data)); //Register request sent
 
-    userService.register(user).then(
+    userService.register(bigUser).then(
       (user) => {
-        dispatch(success(user));
-        history.push("/login");
+        dispatch(success(bigUser));
       },
       (error) => {
         dispatch(failure(error));

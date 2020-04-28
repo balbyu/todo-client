@@ -13,7 +13,7 @@ export function todos(state = initialState, action) {
       };
 
     case actionTypes.GETALL_SUCCESS:
-      return { ...state, todos: action.todos, loading: false };
+      return { ...state, todos: action.todos, loading: false, loaded: true };
 
     case actionTypes.GETALL_FAILURE:
       return {
@@ -27,9 +27,7 @@ export function todos(state = initialState, action) {
       return { ...state };
 
     case actionTypes.CREATE_SUCCESS:
-      return {
-        todos: [...state.todos, action.todo],
-      };
+      return { ...state, todos: [...state.todos, action.todo] };
 
     case actionTypes.CREATE_FAILURE:
       return {
@@ -91,6 +89,7 @@ export function todos(state = initialState, action) {
 
     case actionTypes.DELETE_SUCCESS:
       return {
+        ...state,
         todos: state.todos.filter((todo) => todo.id !== action.id),
       };
 

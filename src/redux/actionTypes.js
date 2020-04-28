@@ -1,5 +1,10 @@
 export const actionTypes = {
   /**
+   * Application Action Types
+   */
+  RESET_APP: "RESET_APP",
+
+  /**
    * User Action Types
    */
   REGISTER_REQUEST: "USERS_REGISTER_REQUEST",
